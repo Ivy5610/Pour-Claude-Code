@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#2a0f2e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Entre nous" />
+  <title>Entre nous · le jeu de cartes</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="bg-hearts" aria-hidden="true"></div>
+
+  <!-- ACCUEIL -->
+  <main id="home" class="screen active">
+    <header class="hero">
+      <div class="logo">💌</div>
+      <h1>Entre nous</h1>
+      <p class="tagline">Un jeu de cartes pour apprendre à se connaître, une question à la fois.</p>
+    </header>
+
+    <section class="players">
+      <label>
+        <span>Toi</span>
+        <input id="name-a" type="text" maxlength="16" placeholder="Ton prénom" autocomplete="off" />
+      </label>
+      <span class="amp">&</span>
+      <label>
+        <span>Ton date</span>
+        <input id="name-b" type="text" maxlength="16" placeholder="Son prénom" autocomplete="off" />
+      </label>
+    </section>
+
+    <button id="resume" class="btn ghost hidden">↺ Reprendre la partie en cours</button>
+
+    <section id="deck-list" class="deck-list" aria-label="Choisissez vos paquets"></section>
+
+    <div class="options">
+      <label class="switch">
+        <input id="shuffle" type="checkbox" />
+        <span class="slider"></span>
+        <span class="switch-label">Mélanger les cartes</span>
+      </label>
+      <button id="open-favs" class="btn link">❤ Nos coups de cœur <span id="fav-count"></span></button>
+    </div>
+
+    <div class="start-bar">
+      <button id="start" class="btn primary">Tirer la première carte</button>
+    </div>
+  </main>
+
+  <!-- PARTIE -->
+  <main id="play" class="screen">
+    <header class="play-top">
+      <button id="back" class="icon-btn" aria-label="Retour à l'accueil">←</button>
+      <div class="progress">
+        <div class="progress-text" id="progress-text"></div>
+        <div class="progress-bar"><div id="progress-fill"></div></div>
+      </div>
+      <span class="icon-btn placeholder"></span>
+    </header>
+
+    <div class="turn" id="turn"></div>
+
+    <section class="table" id="table">
+      <!-- cartes injectées par app.js -->
+    </section>
+
+    <p class="swipe-hint" id="swipe-hint">Touche la carte pour la retourner</p>
+
+    <footer class="play-actions">
+      <button id="joker" class="action" aria-label="Passer avec un joker">
+        <span class="action-icon">🃏</span>
+        <span class="action-label">Joker <b id="joker-count"></b></span>
+      </button>
+      <button id="fav" class="action" aria-label="Ajouter aux coups de cœur">
+        <span class="action-icon" id="fav-icon">♡</span>
+        <span class="action-label">Coup de cœur</span>
+      </button>
+      <button id="next" class="action main" aria-label="Carte suivante">
+        <span class="action-icon">→</span>
+        <span class="action-label">Suivante</span>
+      </button>
+    </footer>
+  </main>
+
+  <!-- FIN -->
+  <main id="end" class="screen">
+    <div class="end-box">
+      <div class="end-emoji">💞</div>
+      <h2>Paquet terminé !</h2>
+      <p id="end-text"></p>
+      <button id="end-favs" class="btn ghost">❤ Revoir nos coups de cœur</button>
+      <button id="end-home" class="btn primary">Choisir un autre paquet</button>
+    </div>
+  </main>
+
+  <!-- COUPS DE CŒUR -->
+  <div id="favs-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="favs-title">
+    <div class="modal-box">
+      <header>
+        <h2 id="favs-title">Nos coups de cœur</h2>
+        <button id="close-favs" class="icon-btn" aria-label="Fermer">✕</button>
+      </header>
+      <p class="muted">Les questions qu'on veut garder, ou reprendre un autre soir.</p>
+      <ul id="favs-list"></ul>
+      <button id="play-favs" class="btn primary">Rejouer ces cartes</button>
+    </div>
+  </div>
+
+  <!-- CONSENTEMENT PAQUET INTIME -->
+  <div id="adult-modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-box small">
+      <h2>🔥 Sous la couette</h2>
+      <p>Des questions plus intimes, à prendre avec douceur et humour.</p>
+      <p class="muted">Règle d'or : on peut toujours passer, sans se justifier.</p>
+      <div class="row">
+        <button id="adult-no" class="btn ghost">Pas ce soir</button>
+        <button id="adult-yes" class="btn primary">On y va</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/decks.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
