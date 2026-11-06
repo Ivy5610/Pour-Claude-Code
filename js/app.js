@@ -4,7 +4,7 @@
   const DECKS = window.DECKS;
   const deckById = Object.fromEntries(DECKS.map((d) => [d.id, d]));
   const JOKERS_PER_PLAYER = 3;
-  const STORE = "entre-nous-v1";
+  const STORE = "between-us-v1";
 
   const $ = (sel) => document.querySelector(sel);
   const el = (tag, cls, html) => {
@@ -15,7 +15,7 @@
   };
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-  // ---------- état persistant ----------
+  // ---------- persistent state ----------
   const defaults = {
     names: ["", ""],
     selected: ["p1"],
@@ -30,8 +30,10 @@
   } catch {
     state = { ...defaults };
   }
+  // drop decks that no longer exist
+  state.selected = (state.selected || []).filter((id) => deckById[id]);
   const save = () => {
-    try { localStorage.setItem(STORE, JSON.stringify(state)); } catch { /* mode privé */ }
+    try { localStorage.setItem(STORE, JSON.stringify(state)); } catch { /* private browsing */ }
   };
 
   const keyOf = (deckId, i) => `${deckId}:${i}`;
@@ -41,9 +43,9 @@
     if (!deck || !deck.cards[+i]) return null;
     return { deck, card: deck.cards[+i], index: +i, key };
   };
-  const nameOf = (p) => state.names[p] || (p === 0 ? "Toi" : "Ton date");
+  const nameOf = (p) => state.names[p] || (p === 0 ? "You" : "Your date");
 
-  // ---------- fond : cœurs flottants ----------
+  // ---------- background: floating hearts ----------
   (function hearts() {
     const box = $(".bg-hearts");
     const glyphs = ["♥", "❤", "♡", "✦"];
@@ -64,7 +66,7 @@
     window.scrollTo(0, 0);
   }
 
-  // ---------- accueil ----------
+  // ---------- home ----------
   const nameA = $("#name-a");
   const nameB = $("#name-b");
   nameA.value = state.names[0];
@@ -83,8 +85,8 @@
     groups.forEach((g) => {
       const decks = DECKS.filter((d) => d.group === g);
       const title = el("div", "group-title", `<span>${esc(g)}</span>`);
-      if (g === "Les 36 questions") {
-        const all = el("button", null, "Les 36 d'affilée");
+      if (g === "The 36 Questions") {
+        const all = el("button", null, "All 36 in a row");
         all.onclick = () => {
           state.selected = decks.map((d) => d.id);
           state.shuffle = false;
@@ -103,7 +105,7 @@
           `<span class="deck-emoji">${d.emoji}</span>
            <span class="deck-name">${esc(d.name)}</span>
            <span class="deck-sub">${esc(d.subtitle)}</span>
-           <span class="deck-count">${d.cards.length} cartes</span>`
+           <span class="deck-count">${d.cards.length} cards</span>`
         );
         b.style.setProperty("--c", d.color);
         b.setAttribute("aria-pressed", state.selected.includes(d.id));
@@ -122,7 +124,7 @@
       return;
     }
     state.selected = on ? state.selected.filter((x) => x !== d.id) : [...state.selected, d.id];
-    // garde l'ordre des paquets tel que défini
+    // keep decks in their defined order
     state.selected = DECKS.map((x) => x.id).filter((id) => state.selected.includes(id));
     save();
     renderDecks();
@@ -166,7 +168,7 @@
   };
   $("#resume").onclick = () => { show("play"); renderTable(true); };
 
-  // ---------- partie ----------
+  // ---------- game ----------
   const table = $("#table");
   let timerHandle = null;
 
@@ -178,7 +180,7 @@
     const { deck, card, index } = entry;
     const c = el("div", "card " + (cls || ""));
     c.style.setProperty("--c", deck.color);
-    const label = card.type === "jeu" ? "Petit jeu" : card.type === "minuteur" ? "Chrono" : "Question";
+    const label = card.type === "game" ? "Mini-game" : card.type === "timer" ? "Timer" : "Question";
     const num = deck.ordered ? `${index + 1} / ${deck.cards.length}` : label;
     c.innerHTML = `
       <div class="card-inner">
@@ -186,7 +188,7 @@
           <div class="back-emoji">${deck.emoji}</div>
           <div class="back-name">${esc(deck.name)}</div>
           <div class="back-sub">${esc(deck.subtitle)}</div>
-          <div class="back-tap">Touche pour retourner</div>
+          <div class="back-tap">Tap to flip</div>
         </div>
         <div class="face front">
           <span class="corner br">${deck.emoji}</span>
@@ -197,7 +199,7 @@
           <div class="front-body">
             <p class="question">${esc(card.text)}</p>
             ${card.hint ? `<p class="hint">${esc(card.hint)}</p>` : ""}
-            ${card.type === "minuteur" ? timerHTML(card.seconds) : ""}
+            ${card.type === "timer" ? timerHTML(card.seconds) : ""}
           </div>
           <div class="front-foot">♥</div>
         </div>
@@ -209,7 +211,7 @@
   function timerHTML(sec) {
     return `<div class="timer" data-sec="${sec}">
       <div class="timer-ring"><span>${fmt(sec)}</span></div>
-      <button type="button">Lancer</button>
+      <button type="button">Start</button>
     </div>`;
   }
 
@@ -224,7 +226,7 @@
     btn.addEventListener("pointerdown", (e) => e.stopPropagation());
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
-      if (timerHandle) { stopTimer(); btn.textContent = "Reprendre"; return; }
+      if (timerHandle) { stopTimer(); btn.textContent = "Resume"; return; }
       if (left <= 0) { left = total; t.classList.remove("done"); }
       btn.textContent = "Pause";
       timerHandle = setInterval(() => {
@@ -235,7 +237,7 @@
           stopTimer();
           t.classList.add("done");
           label.textContent = "✓";
-          btn.textContent = "Recommencer";
+          btn.textContent = "Restart";
           if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
         }
       }, 1000);
@@ -249,7 +251,7 @@
     if (s.pos >= s.queue.length) return finish();
 
     table.innerHTML = "";
-    // cartes du dessous (visuel de pile)
+    // cards underneath (stack effect)
     [2, 1].forEach((offset) => {
       const k = s.queue[s.pos + offset];
       const e = k && cardOf(k);
@@ -264,11 +266,11 @@
     wireTimer(c);
     wireSwipe(c);
 
-    // en-tête
+    // header
     const total = s.queue.length;
-    $("#progress-text").textContent = `Carte ${s.pos + 1} sur ${total}`;
+    $("#progress-text").textContent = `Card ${s.pos + 1} of ${total}`;
     $("#progress-fill").style.width = `${((s.pos + 1) / total) * 100}%`;
-    $("#turn").innerHTML = `C'est <b>${esc(nameOf(s.turn))}</b> qui commence`;
+    $("#turn").innerHTML = `First up: <b>${esc(nameOf(s.turn))}</b>`;
     $("#joker-count").textContent = `×${s.jokers[s.turn]}`;
     $("#joker").disabled = s.jokers[s.turn] <= 0;
     const isFav = state.favorites.includes(entry.key);
@@ -279,8 +281,8 @@
 
   function updateHint(c) {
     $("#swipe-hint").textContent = c.classList.contains("flipped")
-      ? "Répondez chacun votre tour, puis glissez la carte →"
-      : "Touche la carte pour la retourner";
+      ? "Take turns answering, then swipe the card →"
+      : "Tap the card to flip it";
   }
 
   function flip(c) {
@@ -368,33 +370,33 @@
     if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter") { e.preventDefault(); $("#next").click(); }
   });
 
-  // ---------- fin ----------
+  // ---------- end ----------
   function finish() {
     stopTimer();
     const n = state.session ? state.session.queue.length : 0;
     state.session = null;
     save();
     $("#end-text").textContent =
-      `${n} carte${n > 1 ? "s" : ""} plus tard, vous vous connaissez un peu mieux. ` +
-      `Gardez les questions qui vous ont plu dans vos coups de cœur pour un prochain rendez-vous.`;
+      `${n} card${n > 1 ? "s" : ""} later, you know each other a little better. ` +
+      `Save the questions you loved to your favorites for your next date.`;
     show("end");
   }
   $("#end-home").onclick = () => { show("home"); refreshHome(); };
   $("#end-favs").onclick = openFavs;
 
-  // ---------- coups de cœur ----------
+  // ---------- favorites ----------
   function openFavs() {
     const list = $("#favs-list");
     list.innerHTML = "";
     const entries = state.favorites.map(cardOf).filter(Boolean);
     if (!entries.length) {
-      list.appendChild(el("li", "empty", "Pas encore de coup de cœur. Touche ♡ pendant la partie pour garder une carte."));
+      list.appendChild(el("li", "empty", "No favorites yet. Tap ♡ during the game to keep a card."));
     }
     entries.forEach((e) => {
       const li = el("li", null, `<small>${e.deck.emoji} ${esc(e.deck.name)}</small>${esc(e.card.text)}`);
       li.style.setProperty("--c", e.deck.color);
       const del = el("button", null, "✕");
-      del.setAttribute("aria-label", "Retirer");
+      del.setAttribute("aria-label", "Remove");
       del.onclick = () => {
         state.favorites = state.favorites.filter((k) => k !== e.key);
         save();
@@ -416,6 +418,6 @@
     startGame(shuffleArr(state.favorites.filter((k) => cardOf(k))));
   };
 
-  // ---------- démarrage ----------
+  // ---------- startup ----------
   refreshHome();
 })();

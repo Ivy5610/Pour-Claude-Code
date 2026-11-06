@@ -1,60 +1,60 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#2a0f2e" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="Entre nous" />
-  <title>Entre nous · le jeu de cartes</title>
+  <meta name="apple-mobile-web-app-title" content="Between Us" />
+  <title>Between Us · the card game</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <div class="bg-hearts" aria-hidden="true"></div>
 
-  <!-- ACCUEIL -->
+  <!-- HOME -->
   <main id="home" class="screen active">
     <header class="hero">
       <div class="logo">💌</div>
-      <h1>Entre nous</h1>
-      <p class="tagline">Un jeu de cartes pour apprendre à se connaître, une question à la fois.</p>
+      <h1>Between Us</h1>
+      <p class="tagline">A card game for getting to know each other, one question at a time.</p>
     </header>
 
     <section class="players">
       <label>
-        <span>Toi</span>
-        <input id="name-a" type="text" maxlength="16" placeholder="Ton prénom" autocomplete="off" />
+        <span>You</span>
+        <input id="name-a" type="text" maxlength="16" placeholder="Your name" autocomplete="off" />
       </label>
       <span class="amp">&</span>
       <label>
-        <span>Ton date</span>
-        <input id="name-b" type="text" maxlength="16" placeholder="Son prénom" autocomplete="off" />
+        <span>Your date</span>
+        <input id="name-b" type="text" maxlength="16" placeholder="Their name" autocomplete="off" />
       </label>
     </section>
 
-    <button id="resume" class="btn ghost hidden">↺ Reprendre la partie en cours</button>
+    <button id="resume" class="btn ghost hidden">↺ Resume current game</button>
 
-    <section id="deck-list" class="deck-list" aria-label="Choisissez vos paquets"></section>
+    <section id="deck-list" class="deck-list" aria-label="Choose your decks"></section>
 
     <div class="options">
       <label class="switch">
         <input id="shuffle" type="checkbox" />
         <span class="slider"></span>
-        <span class="switch-label">Mélanger les cartes</span>
+        <span class="switch-label">Shuffle cards</span>
       </label>
-      <button id="open-favs" class="btn link">❤ Nos coups de cœur <span id="fav-count"></span></button>
+      <button id="open-favs" class="btn link">❤ Our favorites <span id="fav-count"></span></button>
     </div>
 
     <div class="start-bar">
-      <button id="start" class="btn primary">Tirer la première carte</button>
+      <button id="start" class="btn primary">Draw the first card</button>
     </div>
   </main>
 
-  <!-- PARTIE -->
+  <!-- GAME -->
   <main id="play" class="screen">
     <header class="play-top">
-      <button id="back" class="icon-btn" aria-label="Retour à l'accueil">←</button>
+      <button id="back" class="icon-btn" aria-label="Back to home">←</button>
       <div class="progress">
         <div class="progress-text" id="progress-text"></div>
         <div class="progress-bar"><div id="progress-fill"></div></div>
@@ -65,60 +65,60 @@
     <div class="turn" id="turn"></div>
 
     <section class="table" id="table">
-      <!-- cartes injectées par app.js -->
+      <!-- cards injected by app.js -->
     </section>
 
-    <p class="swipe-hint" id="swipe-hint">Touche la carte pour la retourner</p>
+    <p class="swipe-hint" id="swipe-hint">Tap the card to flip it</p>
 
     <footer class="play-actions">
-      <button id="joker" class="action" aria-label="Passer avec un joker">
+      <button id="joker" class="action" aria-label="Skip with a joker">
         <span class="action-icon">🃏</span>
         <span class="action-label">Joker <b id="joker-count"></b></span>
       </button>
-      <button id="fav" class="action" aria-label="Ajouter aux coups de cœur">
+      <button id="fav" class="action" aria-label="Add to favorites">
         <span class="action-icon" id="fav-icon">♡</span>
-        <span class="action-label">Coup de cœur</span>
+        <span class="action-label">Favorite</span>
       </button>
-      <button id="next" class="action main" aria-label="Carte suivante">
+      <button id="next" class="action main" aria-label="Next card">
         <span class="action-icon">→</span>
-        <span class="action-label">Suivante</span>
+        <span class="action-label">Next</span>
       </button>
     </footer>
   </main>
 
-  <!-- FIN -->
+  <!-- END -->
   <main id="end" class="screen">
     <div class="end-box">
       <div class="end-emoji">💞</div>
-      <h2>Paquet terminé !</h2>
+      <h2>Deck complete!</h2>
       <p id="end-text"></p>
-      <button id="end-favs" class="btn ghost">❤ Revoir nos coups de cœur</button>
-      <button id="end-home" class="btn primary">Choisir un autre paquet</button>
+      <button id="end-favs" class="btn ghost">❤ See our favorites</button>
+      <button id="end-home" class="btn primary">Choose another deck</button>
     </div>
   </main>
 
-  <!-- COUPS DE CŒUR -->
+  <!-- FAVORITES -->
   <div id="favs-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="favs-title">
     <div class="modal-box">
       <header>
-        <h2 id="favs-title">Nos coups de cœur</h2>
-        <button id="close-favs" class="icon-btn" aria-label="Fermer">✕</button>
+        <h2 id="favs-title">Our favorites</h2>
+        <button id="close-favs" class="icon-btn" aria-label="Close">✕</button>
       </header>
-      <p class="muted">Les questions qu'on veut garder, ou reprendre un autre soir.</p>
+      <p class="muted">The questions we want to keep, or come back to another night.</p>
       <ul id="favs-list"></ul>
-      <button id="play-favs" class="btn primary">Rejouer ces cartes</button>
+      <button id="play-favs" class="btn primary">Play these cards again</button>
     </div>
   </div>
 
-  <!-- CONSENTEMENT PAQUET INTIME -->
+  <!-- INTIMATE DECK CONSENT -->
   <div id="adult-modal" class="modal hidden" role="dialog" aria-modal="true">
     <div class="modal-box small">
-      <h2>🔥 Sous la couette</h2>
-      <p>Des questions plus intimes, à prendre avec douceur et humour.</p>
-      <p class="muted">Règle d'or : on peut toujours passer, sans se justifier.</p>
+      <h2>🔥 Under the Covers</h2>
+      <p>More intimate questions, to be taken gently and with humor.</p>
+      <p class="muted">Golden rule: you can always pass, no explanation needed.</p>
       <div class="row">
-        <button id="adult-no" class="btn ghost">Pas ce soir</button>
-        <button id="adult-yes" class="btn primary">On y va</button>
+        <button id="adult-no" class="btn ghost">Not tonight</button>
+        <button id="adult-yes" class="btn primary">Let's go</button>
       </div>
     </div>
   </div>
