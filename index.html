@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#2a0f2e" />
+  <meta name="theme-color" content="#1d1424" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Between Us" />
   <title>Between Us · the card game</title>
@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div class="bg-hearts" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"><i></i><i></i><i></i></div>
 
   <!-- HOME -->
   <main id="home" class="screen active">
@@ -24,12 +24,12 @@
     <section class="players">
       <label>
         <span>You</span>
-        <input id="name-a" type="text" maxlength="16" placeholder="Your name" autocomplete="off" />
+        <input id="name-a" type="text" maxlength="16" placeholder="Your name" autocomplete="off" required />
       </label>
       <span class="amp">&</span>
       <label>
         <span>Your date</span>
-        <input id="name-b" type="text" maxlength="16" placeholder="Their name" autocomplete="off" />
+        <input id="name-b" type="text" maxlength="16" placeholder="Their name" autocomplete="off" required />
       </label>
     </section>
 
@@ -47,6 +47,7 @@
     </div>
 
     <div class="start-bar">
+      <p id="name-hint" class="name-hint">Enter both names above to start playing.</p>
       <button id="start" class="btn primary">Draw the first card</button>
     </div>
   </main>

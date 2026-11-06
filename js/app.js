@@ -45,21 +45,6 @@
   };
   const nameOf = (p) => state.names[p] || (p === 0 ? "You" : "Your date");
 
-  // ---------- background: floating hearts ----------
-  (function hearts() {
-    const box = $(".bg-hearts");
-    const glyphs = ["♥", "❤", "♡", "✦"];
-    for (let i = 0; i < 16; i++) {
-      const s = el("span", null, glyphs[i % glyphs.length]);
-      s.style.left = Math.random() * 100 + "%";
-      s.style.fontSize = 10 + Math.random() * 18 + "px";
-      s.style.color = ["#ff9eb1", "#ffd59e", "#ff6b8b", "#c77dff"][i % 4];
-      s.style.animationDuration = 14 + Math.random() * 16 + "s";
-      s.style.animationDelay = -Math.random() * 30 + "s";
-      box.appendChild(s);
-    }
-  })();
-
   // ---------- navigation ----------
   function show(id) {
     document.querySelectorAll(".screen").forEach((s) => s.classList.toggle("active", s.id === id));
@@ -71,8 +56,20 @@
   const nameB = $("#name-b");
   nameA.value = state.names[0];
   nameB.value = state.names[1];
-  nameA.addEventListener("input", () => { state.names[0] = nameA.value.trim(); save(); });
-  nameB.addEventListener("input", () => { state.names[1] = nameB.value.trim(); save(); });
+  const hasNames = () => Boolean(state.names[0] && state.names[1]);
+  // Both names are required before anything can be played.
+  function updateGate() {
+    const ok = hasNames();
+    $("#start").disabled = !ok || state.selected.length === 0;
+    $("#resume").disabled = !ok;
+    $("#name-hint").classList.toggle("hidden", ok);
+    nameA.classList.toggle("missing", !state.names[0]);
+    nameB.classList.toggle("missing", !state.names[1]);
+    const fav = $("#play-favs");
+    if (fav) fav.disabled = !ok || !state.favorites.some(cardOf);
+  }
+  nameA.addEventListener("input", () => { state.names[0] = nameA.value.trim(); save(); updateGate(); });
+  nameB.addEventListener("input", () => { state.names[1] = nameB.value.trim(); save(); updateGate(); });
 
   const shuffleBox = $("#shuffle");
   shuffleBox.checked = state.shuffle;
@@ -114,7 +111,7 @@
       });
       list.appendChild(grid);
     });
-    $("#start").disabled = state.selected.length === 0;
+    updateGate();
   }
 
   function toggleDeck(d) {
@@ -154,6 +151,7 @@
 
   function startGame(queue) {
     if (!queue.length) return;
+    if (!hasNames()) { show("home"); refreshHome(); (state.names[0] ? nameB : nameA).focus(); return; }
     state.session = { queue, pos: 0, turn: 0, jokers: [JOKERS_PER_PLAYER, JOKERS_PER_PLAYER], flipped: false };
     save();
     show("play");
@@ -166,7 +164,11 @@
     if (state.shuffle) queue = shuffleArr(queue);
     startGame(queue);
   };
-  $("#resume").onclick = () => { show("play"); renderTable(true); };
+  $("#resume").onclick = () => {
+    if (!hasNames()) return updateGate();
+    show("play");
+    renderTable(true);
+  };
 
   // ---------- game ----------
   const table = $("#table");
@@ -406,7 +408,7 @@
       li.appendChild(del);
       list.appendChild(li);
     });
-    $("#play-favs").disabled = !entries.length;
+    updateGate();
     $("#favs-modal").classList.remove("hidden");
   }
   const closeFavs = () => $("#favs-modal").classList.add("hidden");
