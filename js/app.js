@@ -309,12 +309,14 @@
     updateHint(c);
   }
 
+  let leaving = false;
   function advance(dir = "left") {
     const s = state.session;
-    if (!s) return;
+    if (!s || leaving) return;
     const c = table.querySelector(".card:last-child");
     stopTimer();
     const go = () => {
+      leaving = false;
       s.pos++;
       s.turn = 1 - s.turn;
       s.flipped = false;
@@ -322,8 +324,9 @@
       renderTable(true);
     };
     if (c) {
+      leaving = true;
       c.classList.add(dir === "right" ? "fly-right" : "fly-left");
-      setTimeout(go, 280);
+      setTimeout(go, 260);
     } else go();
   }
 
