@@ -13,25 +13,44 @@
 <body>
   <div class="bg-glow" aria-hidden="true"><i></i><i></i><i></i></div>
 
-  <!-- HOME -->
-  <main id="home" class="screen active">
-    <header class="hero">
-      <div class="logo">💌</div>
-      <h1>Between Us</h1>
-      <p class="tagline">A card game for getting to know each other, one question at a time.</p>
-    </header>
+  <!-- WELCOME: names only -->
+  <main id="welcome" class="screen active">
+    <div class="welcome-box">
+      <header class="hero">
+        <div class="logo">💌</div>
+        <h1>Between Us</h1>
+        <p class="tagline">A card game for getting to know each other, one question at a time.</p>
+      </header>
 
-    <section class="players">
-      <label>
-        <span>You</span>
-        <input id="name-a" type="text" maxlength="16" placeholder="Your name" autocomplete="off" required />
-      </label>
-      <span class="amp">&</span>
-      <label>
-        <span>Your date</span>
-        <input id="name-b" type="text" maxlength="16" placeholder="Their name" autocomplete="off" required />
-      </label>
-    </section>
+      <form id="names-form" class="welcome-form" autocomplete="off" novalidate>
+        <p class="welcome-title">First, who's playing?</p>
+        <section class="players">
+          <label>
+            <span>You</span>
+            <input id="name-a" type="text" maxlength="16" placeholder="Your name" autocomplete="off" enterkeyhint="next" />
+          </label>
+          <span class="amp">&amp;</span>
+          <label>
+            <span>Your date</span>
+            <input id="name-b" type="text" maxlength="16" placeholder="Their name" autocomplete="off" enterkeyhint="done" />
+          </label>
+        </section>
+        <p id="name-hint" class="name-hint">Enter both names to continue.</p>
+        <button id="names-ok" class="btn primary" type="submit" disabled>OK</button>
+      </form>
+    </div>
+  </main>
+
+  <!-- HOME: choose decks -->
+  <main id="home" class="screen">
+    <header class="home-top">
+      <div>
+        <p class="home-kicker">Playing</p>
+        <p class="home-names"><span id="home-name-a"></span> <i>&amp;</i> <span id="home-name-b"></span></p>
+      </div>
+      <button id="change-names" class="btn link" type="button">Change names</button>
+    </header>
+    <h2 class="home-title">Choose your decks</h2>
 
     <button id="resume" class="btn ghost hidden">↺ Resume current game</button>
 
@@ -47,7 +66,6 @@
     </div>
 
     <div class="start-bar">
-      <p id="name-hint" class="name-hint">Enter both names above to start playing.</p>
       <button id="start" class="btn primary">Draw the first card</button>
     </div>
   </main>

@@ -57,19 +57,33 @@
   nameA.value = state.names[0];
   nameB.value = state.names[1];
   const hasNames = () => Boolean(state.names[0] && state.names[1]);
-  // Both names are required before anything can be played.
-  function updateGate() {
+
+  // OK is only available once both names are filled in.
+  function updateNames() {
+    state.names[0] = nameA.value.trim();
+    state.names[1] = nameB.value.trim();
+    save();
     const ok = hasNames();
-    $("#start").disabled = !ok || state.selected.length === 0;
-    $("#resume").disabled = !ok;
+    $("#names-ok").disabled = !ok;
     $("#name-hint").classList.toggle("hidden", ok);
-    nameA.classList.toggle("missing", !state.names[0]);
-    nameB.classList.toggle("missing", !state.names[1]);
-    const fav = $("#play-favs");
-    if (fav) fav.disabled = !ok || !state.favorites.some(cardOf);
   }
-  nameA.addEventListener("input", () => { state.names[0] = nameA.value.trim(); save(); updateGate(); });
-  nameB.addEventListener("input", () => { state.names[1] = nameB.value.trim(); save(); updateGate(); });
+  nameA.addEventListener("input", updateNames);
+  nameB.addEventListener("input", updateNames);
+
+  function goHome() {
+    $("#home-name-a").textContent = state.names[0];
+    $("#home-name-b").textContent = state.names[1];
+    show("home");
+    refreshHome();
+  }
+  $("#names-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    updateNames();
+    if (!hasNames()) return (state.names[0] ? nameB : nameA).focus();
+    document.activeElement && document.activeElement.blur();
+    goHome();
+  });
+  $("#change-names").onclick = () => { show("welcome"); nameA.focus(); };
 
   const shuffleBox = $("#shuffle");
   shuffleBox.checked = state.shuffle;
@@ -111,7 +125,7 @@
       });
       list.appendChild(grid);
     });
-    updateGate();
+    $("#start").disabled = state.selected.length === 0;
   }
 
   function toggleDeck(d) {
@@ -151,7 +165,7 @@
 
   function startGame(queue) {
     if (!queue.length) return;
-    if (!hasNames()) { show("home"); refreshHome(); (state.names[0] ? nameB : nameA).focus(); return; }
+    if (!hasNames()) { show("welcome"); return; }
     state.session = { queue, pos: 0, turn: 0, jokers: [JOKERS_PER_PLAYER, JOKERS_PER_PLAYER], flipped: false };
     save();
     show("play");
@@ -165,7 +179,7 @@
     startGame(queue);
   };
   $("#resume").onclick = () => {
-    if (!hasNames()) return updateGate();
+    if (!hasNames()) return show("welcome");
     show("play");
     renderTable(true);
   };
@@ -249,7 +263,7 @@
   function renderTable(fresh) {
     stopTimer();
     const s = state.session;
-    if (!s) return show("home");
+    if (!s) return goHome();
     if (s.pos >= s.queue.length) return finish();
 
     table.innerHTML = "";
@@ -365,7 +379,7 @@
     $("#fav-icon").textContent = on ? "♥" : "♡";
   };
 
-  $("#back").onclick = () => { stopTimer(); show("home"); refreshHome(); };
+  $("#back").onclick = () => { stopTimer(); goHome(); };
 
   document.addEventListener("keydown", (e) => {
     if (!$("#play").classList.contains("active")) return;
@@ -383,7 +397,7 @@
       `Save the questions you loved to your favorites for your next date.`;
     show("end");
   }
-  $("#end-home").onclick = () => { show("home"); refreshHome(); };
+  $("#end-home").onclick = () => { goHome(); };
   $("#end-favs").onclick = openFavs;
 
   // ---------- favorites ----------
@@ -408,7 +422,7 @@
       li.appendChild(del);
       list.appendChild(li);
     });
-    updateGate();
+    $("#play-favs").disabled = !entries.length;
     $("#favs-modal").classList.remove("hidden");
   }
   const closeFavs = () => $("#favs-modal").classList.add("hidden");
@@ -421,5 +435,5 @@
   };
 
   // ---------- startup ----------
-  refreshHome();
+  updateNames();
 })();
